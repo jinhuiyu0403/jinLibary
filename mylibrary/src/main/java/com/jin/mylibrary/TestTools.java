@@ -1,8 +1,8 @@
 package com.jin.mylibrary;
 
-public class Test {
+public class TestTools {
     public float result;
-    public Test(float a,float b){
+    public TestTools(float a, float b){
         result = a + b;
     }
 }
