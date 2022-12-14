@@ -67,6 +67,13 @@ public class WheelDialog extends Dialog {
         this.title.setText(title);
     }
 
+    public TextView GetTitleText(){
+        return title;
+    }
+    public Button GetConfirmBtn(){
+        return Comfirm;
+    }
+
     //确定键监听器
     public void setOnSureListener(View.OnClickListener listener) {
         Comfirm.setOnClickListener(listener);
