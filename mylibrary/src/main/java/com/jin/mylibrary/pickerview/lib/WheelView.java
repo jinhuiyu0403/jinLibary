@@ -475,6 +475,9 @@ public class WheelView extends View {
             case Gravity.RIGHT:
                 drawCenterContentStart = measuredWidth - rect.width();
                 break;
+            case Gravity.FILL:
+                drawCenterContentStart = (int) ((measuredWidth - rect.width()) * 0.5);
+                break;
         }
     }
 
@@ -494,6 +497,9 @@ public class WheelView extends View {
                 break;
             case Gravity.RIGHT:
                 drawOutContentStart = measuredWidth - rect.width();
+                break;
+            case Gravity.FILL:
+                drawCenterContentStart = (int) ((measuredWidth - rect.width()) * 0.5);
                 break;
         }
     }
