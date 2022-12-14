@@ -10,7 +10,7 @@ import android.view.WindowManager;
 
 public class DisplayUtil {
     //设置屏幕横屏且永不熄屏
-    public void SetLandscapeDisplay(Activity activity){
+    public static void SetLandscapeDisplay(Activity activity){
         //屏幕横屏
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
