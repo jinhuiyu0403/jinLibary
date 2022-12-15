@@ -27,7 +27,7 @@ public class DoubleSeekBar extends View {
     private int mScollBarWidth,mScollBarHeight;  //控件宽度=滑动条宽度+滑动块宽度
     private int thumbTop,thunbBootom;//滑块顶部与底部高
     private int offset;//控件的偏移量
-    private int progressLow,progressHigh;
+    private int progressLow = 0,progressHigh = 100;
     private OnSeekBarChangeListener mBarChangeListener;
     public DoubleSeekBar(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -38,6 +38,19 @@ public class DoubleSeekBar extends View {
         bitmap1= BitmapFactory.decodeResource(getResources(),R.mipmap.icon_back);
         bitmap2= BitmapFactory.decodeResource(getResources(), R.mipmap.icon_red);
         bitmap3= BitmapFactory.decodeResource(getResources(),R.mipmap.icon_thumb);
+    }
+
+    public DoubleSeekBar(Context context, AttributeSet attrs,int startpos,int endpos) {
+        super(context, attrs);
+        paint=new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setColor(Color.RED);
+        paint.setStrokeWidth(20);
+        bitmap1= BitmapFactory.decodeResource(getResources(),R.mipmap.icon_back);
+        bitmap2= BitmapFactory.decodeResource(getResources(), R.mipmap.icon_red);
+        bitmap3= BitmapFactory.decodeResource(getResources(),R.mipmap.icon_thumb);
+        progressLow = Math.min(startpos,endpos);
+        progressHigh = Math.max(startpos,endpos);
     }
 
     //默认执行，计算view的宽高,在onDraw()之前
@@ -51,9 +64,17 @@ public class DoubleSeekBar extends View {
         offset=20;
         thumbTop=40;
         thunbBootom=100;
-        progressLow =0;
-        progressHigh=100;
         setMeasuredDimension(width, height);
+    }
+
+    public void SetFirstPos(int value){
+        progressLow = value;
+        this.invalidate();
+    }
+
+    public void SetEndPos(int value){
+        progressHigh = value;
+        this.invalidate();
     }
 
     private int measureWidth(int measureSpec) {
