@@ -28,6 +28,7 @@ public class STM32_HID {
     private UsbEndpoint epIn;
     private final String deviceName;
     private boolean isUsbConnect = false;
+    private boolean isNeedDebugOut = false;
 
     public STM32_HID(Context context, String name){
         this.context = context;
@@ -44,17 +45,17 @@ public class STM32_HID {
         }
         else
         {
-            Log.i(TAG, "usb设备：" + manager);
+            if(isNeedDebugOut) Log.i(TAG, "usb设备：" + manager);
         }
         HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
-        Log.i(TAG, "usb设备：" + deviceList.size());
+        if(isNeedDebugOut) Log.i(TAG, "usb设备：" + deviceList.size());
         for (UsbDevice device : deviceList.values()) {
             // 在这里添加处理设备的代码
             if (device.getProductName().contains(deviceName)) {
                 mUsbDevice = device;
                 @SuppressLint("UnspecifiedImmutableFlag") PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), 0);
                 manager.requestPermission(mUsbDevice, pendingIntent);
-                Log.i(TAG, "找到设备");
+                if(isNeedDebugOut) Log.i(TAG, "找到设备");
             }
         }
         IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
@@ -79,7 +80,7 @@ public class STM32_HID {
                     isUsbConnect = false;
                     break;
                 case ACTION_USB_PERMISSION:
-                    Log.e(TAG, "申请授权");
+                    if(isNeedDebugOut) Log.e(TAG, "申请授权");
                     if(intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
                         //user choose YES for your previously popup window asking for grant perssion
                         // for this usb device
@@ -169,8 +170,12 @@ public class STM32_HID {
         // 1,发送准备命令
         ret = mDeviceConnection.bulkTransfer(epOut, bt,
                 bt.length, 500);
-        if(ret > 0) Log.i(TAG, "已经发送!" + str);
-        else        Log.i(TAG, "发送失败!");
+        if(ret > 0) {
+            if(isNeedDebugOut) Log.i(TAG, "已经发送!" + str);
+        }
+        else {
+            if(isNeedDebugOut) Log.i(TAG, "发送失败!");
+        }
     }
 
     //接收监听函数
@@ -180,6 +185,24 @@ public class STM32_HID {
     private OnReceive onReceive;
     public void OnReceiveListener(OnReceive receive){
         this.onReceive = receive;
+    }
+
+    /**
+     * 获取USB连接状态.
+     *
+     * @return 是否连接
+     */
+    public boolean getConnectState(){
+        return isUsbConnect;
+    }
+
+    /**
+     * 设置Debug 输出.
+     *
+     * @param value 是否输出
+     */
+    public void SetDebugOutput(boolean value){
+        isNeedDebugOut = value;
     }
 
     //接收线程
@@ -194,7 +217,7 @@ public class STM32_HID {
                     ret = mDeviceConnection.bulkTransfer(epIn, Receiveytes,
                             Receiveytes.length, 1000);
                     if(ret > 0) {
-                        Log.d(TAG,"Recv = " + ret);
+                        if(isNeedDebugOut) Log.d(TAG,"Recv = " + ret);
                         onReceive.onreceive(new String(Receiveytes),Receiveytes,ret);
                     }
                 } catch (Exception e) {
