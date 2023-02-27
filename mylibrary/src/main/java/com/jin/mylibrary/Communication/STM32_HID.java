@@ -2,14 +2,17 @@ package com.jin.mylibrary.Communication;
 
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.HashMap;
 
@@ -24,6 +27,7 @@ public class STM32_HID {
     private UsbEndpoint epOut;
     private UsbEndpoint epIn;
     private final String deviceName;
+    private boolean isUsbConnect = false;
 
     public STM32_HID(Context context, String name){
         this.context = context;
@@ -53,8 +57,47 @@ public class STM32_HID {
                 Log.i(TAG, "找到设备");
             }
         }
+        IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
+        filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
+        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
+        context.registerReceiver(mUSBReceiver,filter);
         findIntfAndEpt();
     }
+
+    private class USBReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // 这里可以拿到插入的USB设备对象
+            UsbDevice usbDevice = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+            switch(intent.getAction()) {
+                case UsbManager.ACTION_USB_DEVICE_ATTACHED: // 插入USB设备
+                    Log.e(TAG, "USB插入");
+                    getTheTargetDevice();
+                    break;
+                case UsbManager.ACTION_USB_DEVICE_DETACHED: // 拔出USB设备
+                    Log.e(TAG, "USB拔出");
+                    isUsbConnect = false;
+                    break;
+                case ACTION_USB_PERMISSION:
+                    Log.e(TAG, "申请授权");
+                    if(intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+                        //user choose YES for your previously popup window asking for grant perssion
+                        // for this usb device
+                        findIntfAndEpt();
+                    } else {
+                        //user choose NO for your previously popup window asking for grant perssion
+                        // for this usb device
+                        Toast.makeText(context,"请允许使用权限！",Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    USBReceiver mUSBReceiver = new USBReceiver();
+
     // 寻找接口和分配结点
     private void findIntfAndEpt()
     {
@@ -87,6 +130,7 @@ public class STM32_HID {
                 if (connection.claimInterface(mInterface, true)){
                     Log.i(TAG, "找到接口");
                     mDeviceConnection = connection;
+                    isUsbConnect = true;
                     // 用UsbDeviceConnection 与 UsbInterface 进行端点设置和通讯
                     getEndpoint(mDeviceConnection, mInterface);
                 }else{
