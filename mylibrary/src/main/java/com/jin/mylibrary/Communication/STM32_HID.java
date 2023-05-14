@@ -36,6 +36,7 @@ public class STM32_HID {
         getTheTargetDevice();
     }
 
+    @SuppressLint("UnspecifiedImmutableFlag")
     private void getTheTargetDevice(){
         // 获取USB设备
         manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
@@ -53,7 +54,12 @@ public class STM32_HID {
             // 在这里添加处理设备的代码
             if (device.getProductName().contains(deviceName)) {
                 mUsbDevice = device;
-                @SuppressLint("UnspecifiedImmutableFlag") PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), 0);
+                PendingIntent pendingIntent;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                    pendingIntent = PendingIntent.getActivity(context, 0, new Intent(ACTION_USB_PERMISSION), PendingIntent.FLAG_IMMUTABLE);
+                } else {
+                    pendingIntent = PendingIntent.getActivity(context, 0, new Intent(ACTION_USB_PERMISSION), PendingIntent.FLAG_ONE_SHOT);
+                }
                 manager.requestPermission(mUsbDevice, pendingIntent);
                 if(isNeedDebugOut) Log.i(TAG, "找到设备");
             }
