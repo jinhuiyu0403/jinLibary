@@ -11,4 +11,8 @@
     <color name="bgColor_overlay">#60000000</color>
     <color name="bgColor_default">#FFFFFFFF</color>
 
+    <color name="permissionColorGreen">#41c236</color>
+    <color name="permissionColorWhite">#ffffff</color>
+    <color name="permissionBgColorGreenLight">#44A49C</color>
+    <color name="permissionBgColorBlue">#ee447AA4</color>
 </resources>
