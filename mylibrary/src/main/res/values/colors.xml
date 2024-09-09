@@ -15,4 +15,5 @@
     <color name="permissionColorWhite">#ffffff</color>
     <color name="permissionBgColorGreenLight">#44A49C</color>
     <color name="permissionBgColorBlue">#ee447AA4</color>
+
 </resources>

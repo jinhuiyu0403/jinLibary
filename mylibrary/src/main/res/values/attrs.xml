@@ -80,4 +80,5 @@
     <attr name="PermissionButtonBackground" format="reference"></attr>
     <attr name="PermissionBgFilterColor" format="color"></attr>
     <attr name="PermissionIconFilterColor" format="color"></attr>
+
 </resources>
