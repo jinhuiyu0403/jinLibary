@@ -10,9 +10,7 @@
     <uses-feature
         android:name="android.hardware.bluetooth_le"
         android:required="true" />
-    <application
-        android:label="jin">
-
+    <application>
         <service
             android:name="com.jin.mylibrary.bluetooth.BluetoothService" />
     </application>
