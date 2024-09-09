@@ -11,6 +11,10 @@
         android:name="android.hardware.bluetooth_le"
         android:required="true" />
     <application>
+        <activity
+            android:name="com.jin.mylibrary.hipermission.PermissionActivity"
+            android:exported="false"
+            android:screenOrientation="landscape" />
         <service
             android:name="com.jin.mylibrary.bluetooth.BluetoothService" />
     </application>
