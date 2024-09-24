@@ -52,16 +52,18 @@ public class STM32_HID {
         if(isNeedDebugOut) Log.i(TAG, "usb设备：" + deviceList.size());
         for (UsbDevice device : deviceList.values()) {
             // 在这里添加处理设备的代码
-            if (device.getProductName().contains(deviceName)) {
-                mUsbDevice = device;
-                PendingIntent pendingIntent;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-                    pendingIntent = PendingIntent.getActivity(context, 0, new Intent(ACTION_USB_PERMISSION), PendingIntent.FLAG_IMMUTABLE);
-                } else {
-                    pendingIntent = PendingIntent.getActivity(context, 0, new Intent(ACTION_USB_PERMISSION), PendingIntent.FLAG_ONE_SHOT);
+            if(device.getProductName()!= null){
+                if (device.getProductName().contains(deviceName)) {
+                    mUsbDevice = device;
+                    PendingIntent pendingIntent;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                        pendingIntent = PendingIntent.getActivity(context, 0, new Intent(ACTION_USB_PERMISSION), PendingIntent.FLAG_IMMUTABLE);
+                    } else {
+                        pendingIntent = PendingIntent.getActivity(context, 0, new Intent(ACTION_USB_PERMISSION), PendingIntent.FLAG_ONE_SHOT);
+                    }
+                    manager.requestPermission(mUsbDevice, pendingIntent);
+                    if(isNeedDebugOut) Log.i(TAG, "找到设备");
                 }
-                manager.requestPermission(mUsbDevice, pendingIntent);
-                if(isNeedDebugOut) Log.i(TAG, "找到设备");
             }
         }
         IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
